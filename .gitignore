@@ -1,0 +1,11 @@
+dft_main
+images
+sounds
+CMakeFiles
+CMakeCache.txt
+.cache
+*.cmake
+*.a
+compile_commands.json
+Makefile
+
