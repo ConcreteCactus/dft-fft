@@ -7,7 +7,9 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(sdl2 REQUIRED sdl2)
 pkg_check_modules(sdl2_image REQUIRED SDL2_image)
 
-add_library(dft_lib STATIC src/dft.c)
+add_library(dft_lib STATIC 
+    src/dft_hello.c
+    src/dft.c)
 target_link_libraries(dft_lib 
     m
     ${sdl2_LIBRARIES}
