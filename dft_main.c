@@ -31,7 +31,8 @@ bool fill_texture(SDL_Texture* texture, uint8_t r, uint8_t g, uint8_t b) {
     return true;
 }
 
-bool transform_surface(SDL_Surface* in_surface, SDL_Surface* out_surface) {
+bool transform_surface(const SDL_Surface* in_surface, SDL_Surface* out_surface) 
+{
 }
 
 int main() {

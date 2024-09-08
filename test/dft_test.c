@@ -146,17 +146,19 @@ DFT_TEST(run_with_inverse) {
     DFT_TEST_END;
 }
 
+DFT_DEFINE_FFT_WITH_TYPE(float);
+
 DFT_TEST(run_with_fft) {
     int samples_size = 128;
     float samples[128];
-    dft_cmplx_t result[128];
-    dft_cmplx_t result_fft[128];
+    DFT_CMPLX_T(float) result[128];
+    DFT_CMPLX_T(float) result_fft[128];
     for(int f = 0; f < samples_size / 2; f++) {
         for(int i = 0; i < samples_size; i++) {
             samples[i] = cos(i * f * 2 * M_PI / samples_size);
         }
-        dft_transform_cmplx(result, samples, samples_size);
-        dft_fft(result_fft, samples, samples_size);
+        dft_transform_cmplx((dft_cmplx_t*)result, samples, samples_size);
+        DFT_FFT(float)(result_fft, samples, samples_size);
         for(int i = 0; i < samples_size; i++) {
             DFT_TEST_ASSERT_EQ_APPROX(result[i].r, result_fft[i].r);
             DFT_TEST_ASSERT_EQ_APPROX(result[i].i, -result_fft[i].i);
@@ -165,8 +167,8 @@ DFT_TEST(run_with_fft) {
         for(int i = 0; i < samples_size; i++) {
             samples[i] = sin(i * f * 2 * M_PI / samples_size);
         }
-        dft_transform_cmplx(result, samples, samples_size);
-        dft_fft(result_fft, samples, samples_size);
+        dft_transform_cmplx((dft_cmplx_t*)result, samples, samples_size);
+        DFT_FFT(float)(result_fft, samples, samples_size);
         for(int i = 0; i < samples_size; i++) {
             DFT_TEST_ASSERT_EQ_APPROX(result[i].r, result_fft[i].r);
             DFT_TEST_ASSERT_EQ_APPROX(result[i].i, -result_fft[i].i);
@@ -180,13 +182,13 @@ DFT_TEST(run_with_ifft) {
     int samples_size = 128;
     float samples[128];
     float samples_resynth[128];
-    dft_cmplx_t result[128];
+    DFT_CMPLX_T(float) result[128];
     for(int f = 0; f < samples_size / 2; f++) {
         for(int i = 0; i < samples_size; i++) {
             samples[i] = cos(i * f * 2 * M_PI / samples_size);
         }
-        dft_fft(result, samples, samples_size);
-        dft_ifft(result, samples_resynth, samples_size);
+        DFT_FFT(float)(result, samples, samples_size);
+        DFT_IFFT(float)(result, samples_resynth, samples_size);
         for(int i = 0; i < samples_size; i++) {
             DFT_TEST_ASSERT_EQ_APPROX(samples[i], samples_resynth[i]);
         }
@@ -194,8 +196,8 @@ DFT_TEST(run_with_ifft) {
         for(int i = 0; i < samples_size; i++) {
             samples[i] = sin(i * f * 2 * M_PI / samples_size);
         }
-        dft_fft(result, samples, samples_size);
-        dft_ifft(result, samples_resynth, samples_size);
+        DFT_FFT(float)(result, samples, samples_size);
+        DFT_IFFT(float)(result, samples_resynth, samples_size);
         for(int i = 0; i < samples_size; i++) {
             DFT_TEST_ASSERT_EQ_APPROX(samples[i], samples_resynth[i]);
         }
@@ -209,18 +211,99 @@ DFT_TEST(run_with_ifft_random) {
     srandom(samples_size);
     float samples[128];
     float samples_resynth[128];
-    dft_cmplx_t result[128];
+    DFT_CMPLX_T(float) result[128];
     for(int i = 0; i < samples_size; i++) {
         samples[i] = random() % (1 << 8);
     }
-    dft_fft(result, samples, samples_size);
-    dft_ifft(result, samples_resynth, samples_size);
+    DFT_FFT(float)(result, samples, samples_size);
+    DFT_IFFT(float)(result, samples_resynth, samples_size);
     for(int i = 0; i < samples_size; i++) {
         DFT_TEST_ASSERT_EQ_APPROX(samples[i], samples_resynth[i]);
     }
 
     DFT_TEST_END;
 }
+
+DFT_DEFINE_FFT_WITH_TYPE(int);
+
+DFT_TEST(run_with_ifft_random_int) {
+
+    int samples_size = 128;
+    srandom(samples_size);
+    int samples[128];
+    int samples_resynth[128];
+    DFT_CMPLX_T(int) result[128];
+    for(int i = 0; i < samples_size; i++) {
+        samples[i] = random() % (1 << 8);
+    }
+    DFT_FFT(int)(result, samples, samples_size);
+    DFT_IFFT(int)(result, samples_resynth, samples_size);
+    for(int i = 0; i < samples_size; i++) {
+        DFT_TEST_ASSERT_EQ_APPROX_DELTA(samples[i], samples_resynth[i], 2);
+    }
+
+    DFT_TEST_END;
+}
+
+DFT_TEST(run_with_ifft_random_int_1024) {
+
+    int samples_size = 1024;
+    srandom(samples_size);
+    int samples[1024];
+    int samples_resynth[1024];
+    DFT_CMPLX_T(int) result[1024];
+    for(int i = 0; i < samples_size; i++) {
+        samples[i] = random() % (1 << 8);
+    }
+    DFT_FFT(int)(result, samples, samples_size);
+    DFT_IFFT(int)(result, samples_resynth, samples_size);
+    for(int i = 0; i < samples_size; i++) {
+        DFT_TEST_ASSERT_EQ_APPROX_DELTA(samples[i], samples_resynth[i], 2);
+    }
+
+    DFT_TEST_END;
+}
+
+DFT_DEFINE_FFT_WITH_TYPE(long);
+
+DFT_TEST(run_with_ifft_random_long_1024) {
+
+    int samples_size = 1024;
+    srandom(samples_size);
+    long samples[1024];
+    long samples_resynth[1024];
+    DFT_CMPLX_T(long) result[1024];
+    for(int i = 0; i < samples_size; i++) {
+        samples[i] = random() % (1 << 16);
+    }
+    DFT_FFT(long)(result, samples, samples_size);
+    DFT_IFFT(long)(result, samples_resynth, samples_size);
+    for(int i = 0; i < samples_size; i++) {
+        DFT_TEST_ASSERT_EQ_APPROX_DELTA(samples[i], samples_resynth[i], 2);
+    }
+
+    DFT_TEST_END;
+}
+
+DFT_TEST(run_with_ifft_random_long_16384) {
+
+    int samples_size = 16384;
+    srandom(samples_size);
+    long samples[16384];
+    long samples_resynth[16384];
+    DFT_CMPLX_T(long) result[16384];
+    for(int i = 0; i < samples_size; i++) {
+        samples[i] = random() % (1 << 16);
+    }
+    DFT_FFT(long)(result, samples, samples_size);
+    DFT_IFFT(long)(result, samples_resynth, samples_size);
+    for(int i = 0; i < samples_size; i++) {
+        DFT_TEST_ASSERT_EQ_APPROX_DELTA(samples[i], samples_resynth[i], 2);
+    }
+
+    DFT_TEST_END;
+}
+
 
 DFT_TEST_MAIN {
     DFT_TEST_RUN(run_with_2_zero);
@@ -231,5 +314,9 @@ DFT_TEST_MAIN {
     DFT_TEST_RUN(run_with_fft);
     DFT_TEST_RUN(run_with_ifft);
     DFT_TEST_RUN(run_with_ifft_random);
+    DFT_TEST_RUN(run_with_ifft_random_int);
+    DFT_TEST_RUN(run_with_ifft_random_int_1024);
+    DFT_TEST_RUN(run_with_ifft_random_long_1024);
+    DFT_TEST_RUN(run_with_ifft_random_long_16384);
 }
 
