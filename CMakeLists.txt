@@ -25,6 +25,7 @@ target_compile_options(dft_lib
     ${sdl2_image_CFLAGS_OTHER})
 
 add_executable(dft_main dft_main.c)
-target_link_libraries(dft_main
-    PRIVATE dft_lib)
+target_link_libraries(dft_main PRIVATE dft_lib)
 
+add_executable(dft_test test/dft_test.c)
+target_link_libraries(dft_test PRIVATE dft_lib)
